@@ -1,0 +1,380 @@
+from tkinter import messagebox
+import customtkinter as ctk
+from tkinter import ttk
+from tkcalendar import Calendar
+from PIL import ImageTk, Image
+from datetime import datetime
+
+
+ctk.set_appearance_mode("system")
+ctk.set_default_color_theme("green")
+window = ctk.CTk()
+window.geometry('700x750')
+window.title('Pencarian Data Penduduk')
+
+
+image1=ImageTk.PhotoImage(Image.open("pattern.png"))
+li=ctk.CTkLabel(master=window, image=image1)
+li.pack()
+li.pack(fill="both", expand=True)
+
+layar = ctk.CTkFrame(master=li, width=600, height=640, corner_radius=16)
+layar.place(relx=0.5, rely=0.5, anchor='center')
+
+data_penduduk = [
+    {'nama': 'Fira Adelia Septa', 'nik': 103102430002, 'alamat': 'Banyuwangi', 'tanggal_lahir': '20 September 2005', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Faza Nur Aulia Suraya', 'nik': 1031024006, 'alamat': 'Kendari', 'tanggal_lahir': '27 Maret 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Hafsah', 'nik': 1031024016, 'alamat': 'Sorong', 'tanggal_lahir': '1 April 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Feysha Kamila Pracilya', 'nik': 1031024054, 'alamat': 'Tarakan', 'tanggal_lahir': '31 Agustus 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Yoan Natasya Agustin Sebastian', 'nik': 103102430001, 'alamat': 'Surabaya', 'tanggal_lahir': '20 Agustus 2005', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Ni Luh Made Sri Utami Pradnyandari', 'nik': 1031024055, 'alamat': 'Bali', 'tanggal_lahir': '9 November 2005', 'jenis_kelamin': 'Perempuan', 'agama': 'Hindu'},
+    {'nama': 'Safa Ayu Artanti', 'nik': 103102430004, 'alamat': 'Ponorogo', 'tanggal_lahir': '3 Januari 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Gracella Mangalik', 'nik': 103102400011, 'alamat': 'Tapparan', 'tanggal_lahir': '21 Maret 2005', 'jenis_kelamin': 'Perempuan', 'agama': 'Kristen'},
+    {'nama': 'Tsaqillah Ali', 'nik': 103102400014, 'alamat': 'Mataram', 'tanggal_lahir': '17 Oktober 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Mella Febry Isnasari', 'nik': 103102400016, 'alamat': 'Mojokerto', 'tanggal_lahir': '4 Februari 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Vincent Berwyn Chahyono', 'nik': 103102400017, 'alamat': 'Surabaya', 'tanggal_lahir': '6 Juli 2006', 'jenis_kelamin': 'Laki-laki', 'agama': 'Katolik'},
+    {'nama': 'Muhammad Ilham Maulana', 'nik': 103102400018, 'alamat': 'Tulungagung', 'tanggal_lahir': '20 Oktober 2005', 'jenis_kelamin': 'Laki-laki', 'agama': 'Islam'},
+    {'nama': 'Ahmad Rasya Raenandtama', 'nik': 103102400019, 'alamat': 'Mojokerto', 'tanggal_lahir': '9 September 2006', 'jenis_kelamin': 'Laki-laki', 'agama': 'Islam'},
+    {'nama': 'Muhammad Iqbal', 'nik': 103102400020, 'alamat': 'Sidoarjo', 'tanggal_lahir': '21 Agustus 2005', 'jenis_kelamin': 'Laki-laki', 'agama': 'Islam'},
+    {'nama': 'Akhmad Bustomi', 'nik': 103102400021, 'alamat': 'Pasuruan', 'tanggal_lahir': '26 Oktober 2005', 'jenis_kelamin': 'Laki-laki', 'agama': 'Islam'},
+    {'nama': 'Clairine Anargya Athallah', 'nik': 103102400031, 'alamat': 'Surabaya', 'tanggal_lahir': '14 Februari 2006', 'jenis_kelamin': 'Perempuan', 'agama': 'Islam'},
+    {'nama': 'Inaba Yustio Wibowo', 'nik': 103102400058, 'alamat': 'Sidoarjo', 'tanggal_lahir': '11 september 2004', 'jenis_kelamin': 'Laki-laki', 'agama': 'Islam'},
+    {'nama': 'Muhammad Nabil Fahruddin Evan', 'nik': 103102400053, 'alamat': 'Temanggung', 'tanggal_lahir': '13 Agustus 2004', 'jenis_kelamin': 'Laki-laki', 'agama': 'Islam'},
+]
+
+
+riwayat_pencarian = []
+
+
+def clear_page():
+    for widget in layar.winfo_children():
+        widget.destroy()
+
+def sequential_search(data_list, nama_yang_dicari):
+    hasil_pencarian = []
+    for data in data_list:
+        if nama_yang_dicari in data['nama'].lower():
+            hasil_pencarian.append(data)
+    return hasil_pencarian
+
+def binary_search(data_list, nama_dicari):
+    low = 0
+    high = len(data_list) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        nama_mid = data_list[mid].get('nama', '').lower()
+        if nama_dicari == nama_mid:
+            return mid
+        elif nama_dicari < nama_mid:
+            high = mid - 1
+        else:
+            low = mid + 1
+    return -1
+
+def cari_nama(entry1):
+    nama_dicari = entry1.get().lower().strip()
+
+    if not nama_dicari: 
+        messagebox.showwarning("Input Kosong", "Mohon masukkan nama yang ingin dicari.")
+        return
+
+    hasil_pencarian = sequential_search(data_penduduk, nama_dicari)
+    riwayat_pencarian.append({'kata_kunci': nama_dicari, 'hasil': hasil_pencarian})
+    tampilkan_hasil_di_treeview(hasil_pencarian, f"Hasil Pencarian untuk '{nama_dicari}'")
+
+def out():
+    clear_page()
+    halaman1()
+
+def tambah_biodata():
+    clear_page()
+
+    ctk.CTkLabel(master=layar, text='Tambah Biodata', font=('Arial', 16, 'bold')).pack(pady=10)
+
+    entry_nama = ctk.CTkEntry(master=layar, placeholder_text='Nama', width=300, height=33)
+    entry_nama.pack(pady=5)
+
+    entry_nik = ctk.CTkEntry(master=layar, placeholder_text='NIK', width=300, height=33)
+    entry_nik.pack(pady=5)
+
+    entry_alamat = ctk.CTkEntry(master=layar, placeholder_text='Alamat', width=300, height=33)
+    entry_alamat.pack(pady=5)
+
+    ctk.CTkLabel(master=layar, text='Pilih Tanggal Lahir:', font=('Arial', 12)).pack()
+    kalender = Calendar(master=layar, date_pattern='dd-mm-yyyy')  
+    kalender.pack(pady=5)
+
+    dropdown_jk = ctk.CTkOptionMenu(master=layar, values=["Laki-laki", "Perempuan"])
+    dropdown_jk.set("Pilih Jenis Kelamin")
+    dropdown_jk.pack(pady=5)
+
+    dropdown_agama = ctk.CTkOptionMenu(master=layar, values=["Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu"])
+    dropdown_agama.set("Pilih Agama")
+    dropdown_agama.pack(pady=5)
+
+    def simpan_data():
+        nama = entry_nama.get().strip()
+        nik = entry_nik.get().strip()
+        alamat = entry_alamat.get().strip()
+        tanggal_raw = kalender.get_date()
+        jenis_kelamin = dropdown_jk.get()
+        agama = dropdown_agama.get().strip()
+
+        if not nama or not nik or not alamat or jenis_kelamin == "Pilih Jenis Kelamin" or agama == "Pilih Agama":
+            messagebox.showerror("Error", "Semua data harus diisi!")
+            return
+
+        try:
+            tanggal_obj = datetime.strptime(tanggal_raw, '%d-%m-%Y')
+        except ValueError:
+            messagebox.showerror("Format Salah", "Format tanggal harus: dd-mm-yyyy.")
+            return
+
+        bulan_dict = {
+            1: 'Januari', 2: 'Februari', 3: 'Maret', 4: 'April',
+            5: 'Mei', 6: 'Juni', 7: 'Juli', 8: 'Agustus',
+            9: 'September', 10: 'Oktober', 11: 'November', 12: 'Desember'
+        }
+
+        tanggal_lahir = f"{tanggal_obj.day} {bulan_dict[tanggal_obj.month]} {tanggal_obj.year}"
+
+        data = {
+            'nama': nama,
+            'nik': nik,
+            'alamat': alamat,
+            'tanggal_lahir': tanggal_lahir,
+            'jenis_kelamin': jenis_kelamin,
+            'agama': agama
+        }
+
+        riwayat_pencarian.append({'hasil': [data]})
+        messagebox.showinfo("Sukses", "Biodata berhasil ditambahkan!")
+        tampilkan_riwayat()
+
+    ctk.CTkButton(master=layar, text="Simpan", command=simpan_data).pack(pady=10)
+    
+   
+
+
+def hapus_biodata():
+    clear_page()
+
+    label_hapus = ctk.CTkLabel(master=layar, text='Hapus Biodata dari Riwayat', font=('Arial', 16, 'bold'))
+    label_hapus.pack(pady=10)
+
+    entry_hapus = ctk.CTkEntry(master=layar, placeholder_text='Masukkan nama yang ingin dihapus', width=300, height=33)
+    entry_hapus.pack(pady=10)
+
+    def proses_hapus():
+        nama_dihapus = entry_hapus.get().lower().strip()
+        if not nama_dihapus:
+            messagebox.showwarning("Input Kosong", "Masukkan nama yang ingin dihapus.")
+            return
+
+        semua_data = []
+        for item in riwayat_pencarian:
+            semua_data.extend(item.get('hasil', []))
+
+        semua_data_sorted = sorted(semua_data, key=lambda x: x.get('nama', '').lower())
+
+        index = binary_search(semua_data_sorted, nama_dihapus)
+
+        if index != -1:
+           
+            nama_ditemukan = semua_data_sorted[index].get('nama', '').lower()
+            ditemukan = False
+
+            for item in riwayat_pencarian:
+                hasil_awal = len(item['hasil'])
+                item['hasil'][:] = [data for data in item['hasil'] if data.get('nama', '').lower() != nama_ditemukan]
+                if len(item['hasil']) < hasil_awal:
+                    ditemukan = True
+
+            if ditemukan:
+                messagebox.showinfo("Sukses", f"Biodata dengan nama '{nama_ditemukan.title()}' berhasil dihapus dari riwayat.")
+            else:
+                messagebox.showinfo("Info", "Data tidak ditemukan dalam riwayat.")
+
+        else:
+            messagebox.showinfo("Tidak Ditemukan", f"Tidak ditemukan biodata dengan nama '{nama_dihapus}' di riwayat.")
+
+        tampilkan_riwayat()
+
+    def kembali_ke_halaman3():
+        clear_page()
+        halaman3()
+
+    btn_proses = ctk.CTkButton(master=layar, text="Hapus", command=proses_hapus)
+    btn_proses.pack(pady=10)
+
+    btn_kembali = ctk.CTkButton(master=layar, text="Kembali", command=kembali_ke_halaman3)
+    btn_kembali.pack(pady=5)
+
+
+def tampilkan_hasil_di_treeview(hasil_data, judul_halaman):
+    clear_page()
+   
+    label_judul_hasil = ctk.CTkLabel(master=layar, text=judul_halaman, font=('Arial', 18, 'bold'))
+    label_judul_hasil.pack(pady=10)
+
+    style = ttk.Style()
+    style.theme_use("default") 
+
+    style.configure("Treeview",
+                    background="#2b2b2b", 
+                    foreground="white",   
+                    rowheight=25,
+                    fieldbackground="#2b2b2b",
+                    bordercolor="#2b2b2b",
+                    borderwidth=0)
+    style.map('Treeview', background=[('selected', '#5B84B1FF')]) 
+
+    style.configure("Treeview.Heading",
+                    background="#565B5E", 
+                    foreground="white",    
+                    font=('Arial', 10, 'bold'))
+    style.map("Treeview.Heading", background=[('active', '#565B5E')])
+
+    kolom = ('Nama', 'NIK', 'Alamat', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama')
+    
+    tree = ttk.Treeview(master=layar, columns=kolom, show='headings', height=15)
+    
+    tree.heading('Nama', text='Nama', anchor='w')
+    tree.heading('NIK', text='NIK', anchor='w')
+    tree.heading('Alamat', text='Alamat', anchor='w')
+    tree.heading('Tanggal Lahir', text='Tanggal Lahir', anchor='w')
+    tree.heading('Jenis Kelamin', text='Jenis Kelamin', anchor='w')
+    tree.heading('Agama', text='Agama', anchor='w')
+
+
+    tree.column('Nama', width=150)
+    tree.column('NIK', width=100)
+    tree.column('Alamat', width=100)
+    tree.column('Tanggal Lahir', width=120)
+    tree.column('Jenis Kelamin', width=100)
+    tree.column('Agama', width=80)
+
+    if hasil_data:
+        for data in hasil_data:
+            tree.insert('', ctk.END, values=(
+                data.get('nama', ''),
+                data.get('nik', ''),
+                data.get('alamat', ''),
+                data.get('tanggal_lahir', ''),
+                data.get('jenis_kelamin', ''),
+                data.get('agama', '')
+            ))
+    else:
+        tree.insert('', ctk.END, values=("Tidak ada hasil ditemukan.", "", "", "", "", ""))
+
+    tree.pack(pady=10, padx=20) 
+
+    btn_kembali = ctk.CTkButton(master=layar, text="Kembali ke Menu", command=halaman3)
+    btn_kembali.pack(pady=10)
+
+def tampilkan_riwayat():
+    clear_page()
+
+    label = ctk.CTkLabel(master=layar, text='Riwayat Pencarian (Urut A-Z)', font=('Arial', 16, 'bold'))
+    label.pack(pady=10)
+
+    frame_table = ctk.CTkFrame(master=layar, width=550, height=400)
+    frame_table.pack(pady=10)
+    frame_table.pack_propagate(False) 
+
+    tree = ttk.Treeview(master=frame_table, columns=("nama", "nik", "alamat", "tanggal_lahir", "jenis_kelamin", "agama"), show='headings', height=15)
+    tree.pack(fill='both', expand=True)
+
+    tree.heading("nama", text="Nama")
+    tree.heading("nik", text="NIK")
+    tree.heading("alamat", text="Alamat")
+    tree.heading("tanggal_lahir", text="Tanggal Lahir")
+    tree.heading("jenis_kelamin", text="Jenis Kelamin")
+    tree.heading("agama", text="Agama")
+
+    tree.column("nama", width=150)
+    tree.column("nik", width=100)
+    tree.column("alamat", width=130)
+    tree.column("tanggal_lahir", width=120)
+    tree.column("jenis_kelamin", width=100)
+    tree.column("agama", width=80)
+
+    semua_data = []
+    for item in riwayat_pencarian:
+        semua_data.extend(item.get('hasil', []))
+
+    semua_data_sorted = sorted(semua_data, key=lambda x: x.get('nama', '').lower())
+
+    for data in semua_data_sorted:
+        tree.insert('', 'end', values=(
+            data.get("nama", ""),
+            data.get("nik", ""),
+            data.get("alamat", ""),
+            data.get("tanggal_lahir", ""),
+            data.get("jenis_kelamin", ""),
+            data.get("agama", "")
+        ))
+
+    btn_kembali = ctk.CTkButton(master=layar, text="Kembali ke Menu", fg_color="red", command=halaman3)
+    btn_kembali.pack(pady=15)
+
+
+def benar(entry_username, entry_pasword, entry_label, button_login):
+    username = 'data sains'
+    password = '1234'
+    if entry_username.get() == username and entry_pasword.get() == password:
+        entry_label.destroy()
+        entry_username.destroy()
+        entry_pasword.destroy()
+        button_login.destroy()
+        halaman3()
+    else:
+        messagebox.showerror(title='Error', message='Username dan password tidak benar')
+
+def halaman2():
+    clear_page()
+
+
+    entry_label = ctk.CTkLabel(master=layar, text='LOGIN USER')
+    entry_label.place(x=275, y=80)
+
+    entry_username = ctk.CTkEntry(master=layar, placeholder_text='Username', width=250, height=33)
+    entry_username.place(x=190, y=125)
+
+    entry_pasword = ctk.CTkEntry(master=layar, placeholder_text='Password', width=250, height=33, show="*")
+    entry_pasword.place(x=190, y=172)
+
+    button_login = ctk.CTkButton(master=layar, text='Login', command=lambda: benar(entry_username, entry_pasword, entry_label, button_login),corner_radius=40, width=250, height=35)
+    button_login.place(x=190, y=215)
+
+def halaman3():
+    clear_page()
+
+    entry1 = ctk.CTkEntry(master=layar, placeholder_text="masukkan nama", font=('Arial', 12), width=240, height=33)
+    entry1.place(x=180, y=80)
+
+    button1 = ctk.CTkButton(master=layar, text='Cari Nama', width=240, height=34, command = lambda: cari_nama(entry1))
+    button1.place(x=180, y=125)
+
+    button2 = ctk.CTkButton(master=layar, text='Tampilkan Riwayat', width=240, height=34, command = tampilkan_riwayat)
+    button2.place(x=180, y=167)
+
+    button3 = ctk.CTkButton(master=layar, text='Hapus Biodata', width=240, height=34, command=hapus_biodata)
+    button3.place(x=180, y=209)
+
+    button3 = ctk.CTkButton(master=layar, text='Tambah Biodata', width=240, height=34, command=tambah_biodata)
+    button3.place(x=180, y=250)
+
+    button4 = ctk.CTkButton(master=layar, text='Kembali', width=240, height=34, command=out)
+    button4.place(x=180, y=292)
+
+def halaman1():
+    clear_page()
+    label1 = ctk.CTkLabel(master=layar, text='Hallo Semuanya', font=('Arial',20))
+    label1.place(x=240, y=175)
+
+    button1 = ctk.CTkButton(master=layar, text='Masuk', corner_radius=30, width=120, height=35, font=('Arial',16),command=halaman2)
+    button1.place(x=255, y=210)
+
+halaman1()
+window.mainloop()
